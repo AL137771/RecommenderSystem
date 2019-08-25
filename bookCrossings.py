@@ -1,5 +1,5 @@
 import pandas as pd
-
+import numpy as np
 
 books = pd.read_csv('books.csv', sep=';', error_bad_lines=False, encoding="latin-1")
 
@@ -42,3 +42,20 @@ books.loc[(books.yearOfPublication > 2006)|(books.yearOfPublication == 0), 'year
 books.yearOfPublication.fillna(round(books.yearOfPublication.mean()), inplace=True)
 
 books.yearOfPublication = books.yearOfPublication.astype(np.int32)
+
+books.loc[(books.ISBN == '193169656X'), 'publisher'] = 'other'
+books.loc[(books.ISBN == '1931696993'), 'publisher'] = 'other'
+
+
+
+
+# RATINGS
+
+users = pd.read_csv('users.csv', sep=';', error_bad_lines=False, encoding="latin-1")
+
+users.columnos = ['userID', 'Location', 'Age']
+
+users.loc[(users.Age > 90)|(users.Age < 5), 'Age'] = np.nan
+users.Age = users.Age.fillna(users.Age.mean())
+users.Age = users.Age.astype(np.int32)
+
