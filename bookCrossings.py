@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 books = pd.read_csv('books.csv', sep=';', error_bad_lines=False, encoding="latin-1")
 
@@ -59,3 +60,25 @@ users.loc[(users.Age > 90)|(users.Age < 5), 'Age'] = np.nan
 users.Age = users.Age.fillna(users.Age.mean())
 users.Age = users.Age.astype(np.int32)
 
+#RATINGS
+
+ratings = pd.read_csv('ratings.csv', sep=';', error_bad_lines=False, encoding="latin-1")
+ratings.columns = ['userID', 'ISBN', 'bookRating']
+
+n_users = users.shape[0]
+n_books = books.shape[0]
+
+ratings_new = ratings[ratings.ISBN.isin(books.ISBN)]
+ratings_new = ratings_new[ratings_new.userID.isin(users.userID)]
+
+sns.countplot(data=ratings_explicit, x='bookRating')
+#print ratings.shape
+#print ratings_new.shape
+
+sparsity=1.0-len(ratings_new)/float(n_users*n_books)
+
+ratings_explicit = ratings_new[ratings_new.bookRating != 0]
+ratings_explicit = ratings_new[ratings_new.bookRating == 0]
+
+users_exp_ratings = users[users.userID.isin(ratings_explicit.userID)]
+users_imp_ratings = users[users.userID.isin(ratings_implicit.userID)]
