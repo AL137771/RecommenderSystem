@@ -1,0 +1,114 @@
+---
+title: "inventario_script"
+author: "Cesar"
+date: "20/9/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+```{r}
+
+#Se establecen las librerias
+library(tidyverse)
+library(lubridate)
+
+#Convierte el archivo .csv en formato DATASET para ser usado en RStudio
+i <- read.csv("C:/Users/G50/Documents/R pRogRams/RecommenderSystem/inventario_dataset.csv")
+
+#Convierte las columnas de dataset en caracteres en lugar de factores
+CU <- data.frame(lapply(CU, as.character), stringsAsFactors=FALSE)
+
+#La mayoria de los ISBN consta de 13 digitos, entonces se cortan todos los valores antes del decimo tercer digito
+i$ISBN <- str_sub(i$ISBN, end = 13)
+
+#ISBN consta de numeros solamente, asi que se borran los caracteres
+i$ISBN <- gsub("[a-z, A-Z, Ô]*", "", i$ISBN)
+
+#Se eliminan los caracteres especiales de la columna ISBN
+i$ISBN <- gsub("[-, !, @, #, $, %, ^, &, , *, :, -, ., ;, /]", "", CU$ISBN)
+
+#Todo la columna de Actor princial tiene una "a" al principio, esta linea lo elimina
+i$autorPrincipal <- gsub("^.{0,2}", "", i$autorPrincipal)
+
+i$autorPrincipal
+#Elimina numeros innecesarios, tales como años, etc...
+i$autorPrincipal <- gsub("[0-9]*", "", i$autorPrincipal)
+
+#Elimina caracteres especiales
+i$autorPrincipal <- gsub("Ô", "", i$autorPrincipal)
+
+#Elimina las comas, o puntos, son innecesarios
+i$autorPrincipal <- gsub("[-, .]", " ", i$autorPrincipal)
+
+#i$autorPrincipal <- gsub("NA", "", i$autorPrincipal)
+
+#Todo la columna de Actor secundario tiene una "a" al principio, esta linea lo elimina
+i$autorSecundario <- gsub("^.{0,2}", "", i$autorSecundario)
+
+
+#Elimina numeros innecesarios, tales como años, etc...
+i$autorSecundario <- gsub("[0-9]*", "", i$autorSecundario)
+
+#Elimina caracteres especiales
+i$autorSecundario <- gsub("Ô", "", i$autorSecundario)
+
+#Elimina todos los caracteres especiales
+i$autorSecundario <- gsub("[-, .]" , " " ,i$autorSecundario)
+
+i$autorSecundario
+
+#CU$autorSecundario <- gsub("NA", "", CU$autorSecundario)
+
+# Elimina el primer caracter de cada columna
+i$materia <- gsub("^.{0,2}", "", i$materia)
+
+#Elimina los caracteres especiales
+i$materia <- gsub("Ô", "", i$materia)
+#CU$materia <- gsub("x", " ", CU$materia)
+
+#Coloca la letra ñ en donde corresponde
+i$materia <- gsub("õn", "ñ", i$materia)
+
+#Elimina los caracteres especiales
+i$materia <- gsub("[-, !, @, #, $, %, ^, &, , *, :, -, ., ;, /]", " ", i$materia)
+
+#Se crea una nueva columna a partir de los Autores principales y secundarios
+i$autores <- paste(i$autorPrincipal, ",", i$autorSecundario)
+
+# Se eliminan las 2 columnas
+i$autorPrincipal <- NULL
+i$autorSecundario <- NULL
+
+i <- i[c("ISBN", "Titulo", "materia", "autores")]
+
+#Se ordenan las columnas
+i <- i[c(1,2,4, 3)]
+
+write.csv(i, file = "4.csv")
+
+```
+
