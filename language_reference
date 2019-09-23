@@ -1,0 +1,62 @@
+#--------- Reading the data
+uacj_library <- read_csv("data/uacj_library/Historial.csv", 
+                         locale = readr::locale(encoding = "latin1"))
+
+uacj_library %>% glimpse()
+
+#--------- Changing upper to lower case
+uacj_library$Titulo <-tolower(uacj_library$Titulo)
+
+uacj_library %>% glimpse()
+
+#--------- Cleaning function
+rm_accent <- function(str,pattern="all") {
+   if(!is.character(str))
+    str <- as.character(str)
+
+  pattern <- unique(pattern)
+
+  if(any(pattern=="Ç"))
+    pattern[pattern=="Ç"] <- "ç"
+
+  symbols <- c(
+    acute = "áéíóúÁÉÍÓÚýÝ",
+    grave = "àèìòùÀÈÌÒÙ",
+    circunflex = "âêîôûÂÊÎÔÛ",
+    tilde = "ãõÃÕñÑ",
+    umlaut = "äëïöüÄËÏÖÜÿ",
+    cedil = "çÇ"
+  )
+
+  nudeSymbols <- c(
+    acute = "aeiouAEIOUyY",
+    grave = "aeiouAEIOU",
+    circunflex = "aeiouAEIOU",
+    tilde = "aoAOnN",
+    umlaut = "aeiouAEIOUy",
+    cedil = "cC"
+  )
+
+  accentTypes <- c("´","`","^","~","¨","ç")
+
+  if(any(c("all","al","a","todos","t","to","tod","todo")%in%pattern)) # opcao retirar todos
+    return(chartr(paste(symbols, collapse=""), paste(nudeSymbols, collapse=""), str))
+
+  for(i in which(accentTypes%in%pattern))
+    str <- chartr(symbols[i],nudeSymbols[i], str) 
+
+  return(str)
+}
+
+
+rm_accent(uacj_library$Titulo)
+
+#uacj_library %>% View()
+
+#--------- Creating a column for language reference
+uacj_library <- uacj_library %>% 
+  mutate(language_reference = textcat(uacj_library$Titulo))
+
+uacj_library %>% glimpse()  %>% View()
+
+
