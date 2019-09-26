@@ -36,26 +36,27 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 #Se establecen las librerias
 library(tidyverse)
 library(lubridate)
+library(textcat)
 
 #Se obtiene el archivo excel y se convierte a dataframe
-his <- read.csv("C:/Users/G50/Documents/R pRogRams/Historial.csv", na.strings=c("","NA"))
-his <- data.frame(lapply(his, as.character), stringsAsFactors=FALSE)
+his <- read_csv("C:/Users/G50/Desktop/Cesar' Shit/RecommenderSystem/Datasets_Originales/ORIGINAL_HISTORIAL.csv", locale = readr::locale(encoding = "latin1"))
+
+#his <- data.frame(lapply(his, as.character), stringsAsFactors=FALSE)
 
 #Se utiliza para verificar la estructura del dataset
-str(his)
+#str(his)
 
 # Se cuenta el numero lineas que contiene el dataset
 nrow(his)
 
 BCC <- his[grepl("BCC", his$Ubicacion),]
+nrow(BCC)
 
 oBCC <- BCC[!grepl("SRBCC", BCC$Ubicacion),]
-
-
 nrow(oBCC)
 
-write.csv(oBCC, file = "onlyBCC.csv")
-
+#write.csv(oBCC, file = "onlyBCC.csv")
+#oBCC
 
 oBCC$Carrera
 oBCC$Carrera <- gsub("Programa de ", "", oBCC$Carrera)
@@ -72,13 +73,81 @@ str(try)
 
 oBCC$ISBN <- str_sub(try$ISBN, end = 13)
 
+
+oBCC
 oBCC$ISBN
 
 oBCC$ISBN <- gsub("[a-z, A-Z, Ô]*", "", oBCC$ISBN)
 oBCC$ISBN <- gsub("[-, !, @, #, $, %, ^, &, , *, :, -, ., ;, /]", "", oBCC$ISBN)
 
-CU['ISBN']
+#CU['ISBN']
 
-write.csv(oBCC, file = "clean_HISTORIAL.csv")
+
+
+#--------- Reading the data
+#uacj_library <- read_csv("C:/Users/G50/Documents/R pRogRams/RecommenderSystem/Historial.csv", 
+ #                        locale = readr::locale(encoding = "latin1"))
+
+oBCC %>% glimpse()
+
+#--------- Changing upper to lower case
+oBCC$Titulo <-tolower(oBCC$Titulo)
+
+oBCC %>% glimpse()
+
+#--------- Cleaning function
+rm_accent <- function(str,pattern="all") {
+   if(!is.character(str))
+    str <- as.character(str)
+
+  pattern <- unique(pattern)
+
+  if(any(pattern=="Ç"))
+    pattern[pattern=="Ç"] <- "ç"
+
+  symbols <- c(
+    acute = "áéíóúÁÉÍÓÚýÝ",
+    grave = "àèìòùÀÈÌÒÙ",
+    circunflex = "âêîôûÂÊÎÔÛ",
+    tilde = "ãõÃÕñÑ",
+    umlaut = "äëïöüÄËÏÖÜÿ",
+    cedil = "çÇ"
+  )
+
+  nudeSymbols <- c(
+    acute = "aeiouAEIOUyY",
+    grave = "aeiouAEIOU",
+    circunflex = "aeiouAEIOU",
+    tilde = "aoAOnN",
+    umlaut = "aeiouAEIOUy",
+    cedil = "cC"
+  )
+
+  accentTypes <- c("´","`","^","~","¨","ç")
+
+  if(any(c("all","al","a","todos","t","to","tod","todo")%in%pattern)) # opcao retirar todos
+    return(chartr(paste(symbols, collapse=""), paste(nudeSymbols, collapse=""), str))
+
+  for(i in which(accentTypes%in%pattern))
+    str <- chartr(symbols[i],nudeSymbols[i], str) 
+
+  return(str)
+}
+
+
+rm_accent(oBCC$Titulo)
+
+#uacj_library %>% View()
+
+#--------- Creating a column for language reference
+oBCC <- oBCC %>% 
+  mutate(language_reference = textcat(oBCC$Titulo))
+
+oBCC %>% glimpse()  %>% View()
+
+
+oBCC
+
+write.csv(uacj_library, file = "1.csv")
 ```
 
