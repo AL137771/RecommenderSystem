@@ -5,9 +5,7 @@ date: "20/9/2019"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+
 
 ## R Markdown
 
@@ -37,7 +35,7 @@ library(tidyverse)
 library(lubridate)
 
 #Convierte el archivo .csv en formato DATASET para ser usado en RStudio
-i <- read.csv("C:/Users/G50/Documents/R pRogRams/RecommenderSystem/inventario_dataset.csv")
+i <- read_csv("C:/Users/G50/Desktop/Cesar' Shit/RecommenderSystem/Datasets_Originales/ORIGINAL_INVENTARIO.csv", locale = readr::locale(encoding = "latin1"))
 
 #Convierte las columnas de dataset en caracteres en lugar de factores
 CU <- data.frame(lapply(CU, as.character), stringsAsFactors=FALSE)
@@ -108,7 +106,74 @@ i <- i[c("ISBN", "Titulo", "materia", "autores")]
 #Se ordenan las columnas
 i <- i[c(1,2,4, 3)]
 
-write.csv(i, file = "4.csv")
+i
 
+
+
+
+
+i %>% glimpse()
+
+#--------- Changing upper to lower case
+i$Titulo <-tolower(i$Titulo)
+
+i %>% glimpse()
+
+#--------- Cleaning function
+rm_accent <- function(str,pattern="all") {
+   if(!is.character(str))
+    str <- as.character(str)
+
+  pattern <- unique(pattern)
+
+  if(any(pattern=="Ç"))
+    pattern[pattern=="Ç"] <- "ç"
+
+  symbols <- c(
+    acute = "áéíóúÁÉÍÓÚýÝ",
+    grave = "àèìòùÀÈÌÒÙ",
+    circunflex = "âêîôûÂÊÎÔÛ",
+    tilde = "ãõÃÕñÑ",
+    umlaut = "äëïöüÄËÏÖÜÿ",
+    cedil = "çÇ"
+  )
+
+  nudeSymbols <- c(
+    acute = "aeiouAEIOUyY",
+    grave = "aeiouAEIOU",
+    circunflex = "aeiouAEIOU",
+    tilde = "aoAOnN",
+    umlaut = "aeiouAEIOUy",
+    cedil = "cC"
+  )
+
+  accentTypes <- c("´","`","^","~","¨","ç")
+
+  if(any(c("all","al","a","todos","t","to","tod","todo")%in%pattern)) # opcao retirar todos
+    return(chartr(paste(symbols, collapse=""), paste(nudeSymbols, collapse=""), str))
+
+  for(i in which(accentTypes%in%pattern))
+    str <- chartr(symbols[i],nudeSymbols[i], str) 
+
+  return(str)
+}
+
+
+rm_accent(uacj_library$Titulo)
+
+#uacj_library %>% View()
+
+#--------- Creating a column for language reference
+i <- i %>% 
+  mutate(language_reference = textcat(i$Titulo))
+
+i %>% glimpse()  %>% View()
+
+write.csv(i, file = "language_inventario.csv")
+
+i %>% 
+  filter(language_reference == "english")
+
+str(i$language_reference)
 ```
 
