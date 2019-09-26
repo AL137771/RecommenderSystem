@@ -148,6 +148,6 @@ oBCC %>% glimpse()  %>% View()
 
 oBCC
 
-write.csv(uacj_library, file = "1.csv")
+write.csv(oBCC, file = "historial_clean.csv")
 ```
 
