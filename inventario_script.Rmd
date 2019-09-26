@@ -175,5 +175,7 @@ i %>%
   filter(language_reference == "english")
 
 str(i$language_reference)
+
+write.csv(i, file = "inventario_clean.csv")
 ```
 
