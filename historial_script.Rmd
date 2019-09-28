@@ -29,15 +29,13 @@ his <- read_csv("C:/Users/G50/Desktop/Cesar' Shit/RecommenderSystem/Datasets_Ori
 # Se cuenta el numero lineas que contiene el dataset
 nrow(his)
 
+#Elimina las bibliotecas que no pertenecen a Ciudad del conocimiento
 BCC <- his[grepl("BCC", his$Ubicacion),]
 nrow(BCC)
-
 oBCC <- BCC[!grepl("SRBCC", BCC$Ubicacion),]
-nrow(oBCC)
 
-#write.csv(oBCC, file = "onlyBCC.csv")
-#oBCC
 
+#Se arreglan errores respecto a la columna CARRERA
 oBCC$Carrera
 oBCC$Carrera <- gsub("Programa de ", "", oBCC$Carrera)
 oBCC$Carrera <- gsub("HECHO", "", oBCC$Carrera)
@@ -47,28 +45,14 @@ oBCC$Carrera <- gsub("Lic.", "Licenciatura", oBCC$Carrera)
 oBCC$Carrera <- gsub("Licenciaturanciatura", "Licenciatura", oBCC$Carrera)
                       
 
-oBCC$Carrera %>% View()
-
-oBCC$Carrera
-
 try <- oBCC
-
 try['ISBN']
-
 str(try)
 
+#Corrigen datos de la columna ISBN
 oBCC$ISBN <- str_sub(try$ISBN, end = 13)
-
-
-oBCC
-oBCC$ISBN
-
 oBCC$ISBN <- gsub("[a-z, A-Z, ?]*", "", oBCC$ISBN)
 oBCC$ISBN <- gsub("[-, !, @, #, $, %, ^, &, , *, :, -, ., ;, /]", "", oBCC$ISBN)
-
-#CU['ISBN']
-
-
 
 #--------- Reading the data
 #uacj_library <- read_csv("C:/Users/G50/Documents/R pRogRams/RecommenderSystem/Historial.csv", 
@@ -144,7 +128,6 @@ oBCC$Instituto <- oBCC$Carrera
 oBCC %>% select(1,6) %>% View()
 
 #Limpiano columna Carrera
-
 oBCC$Carrera <- gsub("HEHCO  ", "", oBCC$Carrera)
 oBCC$Carrera <- gsub("Licenciatura en Literatura-Hispanomexicana", "Licenciatura en Literatura Hispanomexicana", oBCC$Carrera)
 oBCC$Carrera <- gsub("Licenciatura Periodismo", "Licenciatura en Periodismo", oBCC$Carrera)
@@ -180,7 +163,6 @@ oBCC$Carrera <- gsub("Cirujano Dentista", "Licenciatura en Cirujano Dentista", o
 oBCC$Carrera <- gsub("Licenciatura de Diseno Indus/al@alumnos.uacj.mx/", "Licenciatura en Diseño Industrial", oBCC$Carrera)
 oBCC$Carrera <- gsub("Carrera de Arquitecto", "Licenciatura en arquitectura", oBCC$Carrera)
 oBCC$Carrera <- gsub("Licenciatura en Qimico Farmaco Biologo", "Licenciatura en Químico Fármaco Biólogo", oBCC$Carrera)
-
 oBCC$Instituto <- gsub("HEHCO", "", oBCC$Instituto)
 
 
@@ -206,15 +188,9 @@ oBCC$Instituto <- gsub("Licenciatura en IIT", "IIT", oBCC$Instituto)
 oBCC$Instituto <- gsub("IIT y Comunicaciones", "IIT", oBCC$Instituto)
 
 
-
-
-
-
 #Se asocia el instituto ICSA a las carreras que pertenecen ahi
 oBCC$Instituto <- gsub("Licenciatura en Derecho", "ICSA", oBCC$Instituto)
 oBCC$Instituto <- gsub("programa lic. en Derecho", "ICSA", oBCC$Instituto)
-
-
 oBCC$Instituto <- gsub("P. LIC. DERECHO", "ICSA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Licenciatura en Educación ", "ICSA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Licenciatura en Psicología", "ICSA", oBCC$Instituto)
@@ -245,12 +221,6 @@ oBCC$Instituto <- gsub("Arquitectura", "ICSA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Carrera de Licenciaturanciado de Economia", "ICSA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Maestría en investigacion educativa", "ICSA", oBCC$Instituto)
 
-
-
-
-
-
-
 #Se asocia el instituto IADA a las carreras que pertenecen ahi
 oBCC$Instituto <- gsub("Licenciatura en Diseño Gráfico", "IADA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Licenciatura en Diseño Industrial", "IADA", oBCC$Instituto)
@@ -262,9 +232,6 @@ oBCC$Instituto <- gsub("Licenciatura en Diseño Digital de Medios Interactivos",
 oBCC$Instituto <- gsub("Maestría en Estudios y Procesos Creativos", "IADA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Diseño digital", "IADA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Carrera de Licenciaturanciado en Diseño Gráfico", "IADA", oBCC$Instituto)
-
-
-
 
 #Se asocia el instituto ICB a las carreras que pertenecen ahi
 oBCC$Instituto <- gsub("Licenciatura en Gerontología", "ICB", oBCC$Instituto)
@@ -328,22 +295,20 @@ oBCC %>% select(1,6) %>% View()
     
     
 #oBCC$language_reference <- gsub("", "spanish", oBCC$language_reference)
-str(oBCC)
-  
-  lalal <-  oBCC$language_reference <- as.factor(oBCC$language_reference)
- str(lalal)
-  
-  
- oBCC %>% filter(oBCC$language_reference == "norwegian") %>% View()
-  levels(lalal)
-
-  
-    
-    
-    #oBCC$language_reference <- gsub("latin", "spanish", oBCC$language_reference)
-
+#str(oBCC)
+#lalal <-  oBCC$language_reference <- as.factor(oBCC$language_reference)
+#str(lalal)
+# oBCC %>% filter(oBCC$language_reference == "german") %>% View()
+#levels(lalal)
+#oBCC$language_reference <- gsub("latin", "spanish", oBCC$language_reference)
 #oBCC$language_reference <- gsub("romanian", "esperando", "spanish", #oBCC$language_reference)
 
-
+spanish <- oBCC %>% 
+  filter(language_reference == "spanish")
+    write.csv(spanish, "historial_spanish.csv")
+    
+english <- oBCC %>%
+  filter(language_reference == "english")
+    write.csv(english, "hisorial_english.csv")
 ```
 
