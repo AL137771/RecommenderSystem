@@ -141,7 +141,7 @@ oBCC$Instituto <- oBCC$Carrera
 
 #Variable utilizada para visualizar los datos
 
-oBCC %>% select(4,7) %>% View()
+oBCC %>% select(1,6) %>% View()
 
 #Limpiano columna Carrera
 
@@ -284,13 +284,65 @@ oBCC$Instituto <- gsub("Licenciatura en Biología", "ICB", oBCC$Instituto)
 
 
 
+write.csv(oBCC, file = "historial_clean.csv")
+
+oBCC %>% select(1,6) %>% View()
 
 
+  #Cambia la columna de idioma a SPANISH
 
-oBCC$Instituto <- gsub("", "", oBCC$Instituto)
-oBCC$Instituto <- gsub("", "", oBCC$Instituto)
-oBCC$Instituto <- gsub("", "", oBCC$Instituto)
+  oBCC$language_reference <- gsub("latin", "spanish", oBCC$language_reference)
+  oBCC$language_reference <- gsub("romanian", "spanish", oBCC$language_reference)
+  oBCC$language_reference <- gsub("catalan", "spanish", oBCC$language_reference)
+  oBCC$language_reference <- gsub("rumantsch", "spanish", oBCC$language_reference)
+  oBCC$language_reference <- gsub("portuguese", "spanish", oBCC$language_reference)
+  oBCC$language_reference <- gsub("tagalog", "spanish", oBCC$language_reference)
+  oBCC$language_reference <- gsub("basque", "spanish", oBCC$language_reference)
+  oBCC$language_reference <- gsub("italian", "spanish", oBCC$language_reference)
+  oBCC$language_reference <- gsub("swahili", "spanish", oBCC$language_reference)
+  oBCC$language_reference <- gsub("esperanto", "spanish", oBCC$language_reference)
+  oBCC$language_reference <- gsub("serbian-ascii", "spanish", oBCC$language_reference)
+  oBCC$language_reference <- gsub("slovak-windows1250", "spanish", oBCC$language_reference)
+  oBCC$language_reference <- gsub("bosnian", "spanish", oBCC$language_reference)
+  oBCC$language_reference <- gsub("croatian-ascii", "spanish", oBCC$language_reference)
+  oBCC$language_reference <- gsub("estonian", "spanish", oBCC$language_reference)
+  oBCC$language_reference <- gsub("finnish", "spanish", oBCC$language_reference)
+  oBCC$language_reference <- gsub("latvian", "spanish", oBCC$language_reference)
+  oBCC$language_reference <- gsub("lithuanian", "spanish", oBCC$language_reference)
+  oBCC$language_reference <- gsub("icelandic", "spanish", oBCC$language_reference)
+  oBCC$language_reference <- gsub("norwegian", "spanish", oBCC$language_reference)
+  oBCC$language_reference <- gsub("sanskrit", "spanish", oBCC$language_reference)
+  
+  
+  #Cambia la seccion idioma a ENGLISH
+    oBCC$language_reference <- gsub("middle_english", "english", oBCC$language_reference)
+    oBCC$language_reference <- gsub("polish", "english", oBCC$language_reference)
+    oBCC$language_reference <- gsub("scots_gaelic", "english", oBCC$language_reference)
+    oBCC$language_reference <- gsub("swedish", "english", oBCC$language_reference)
+    oBCC$language_reference <- gsub("slovak-ascii", "english", oBCC$language_reference)
+    oBCC$language_reference <- gsub("frisian", "english", oBCC$language_reference)
+    oBCC$language_reference <- gsub("manx", "english", oBCC$language_reference)
+    oBCC$language_reference <- gsub("afrikaans", "english", oBCC$language_reference)
+    oBCC$language_reference <- gsub("welsh", "english", oBCC$language_reference)
+  
+    
+    
+#oBCC$language_reference <- gsub("", "spanish", oBCC$language_reference)
+str(oBCC)
+  
+  lalal <-  oBCC$language_reference <- as.factor(oBCC$language_reference)
+ str(lalal)
+  
+  
+ oBCC %>% filter(oBCC$language_reference == "norwegian") %>% View()
+  levels(lalal)
 
+  
+    
+    
+    #oBCC$language_reference <- gsub("latin", "spanish", oBCC$language_reference)
+
+#oBCC$language_reference <- gsub("romanian", "esperando", "spanish", #oBCC$language_reference)
 
 
 ```
