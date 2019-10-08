@@ -10,7 +10,7 @@ output: html_document
 #Se establecen las librerias
 library(tidyverse)
 library(lubridate)
-
+library(textcat)
 #Convierte el archivo .csv en formato DATASET para ser usado en RStudio
 i <- read_csv("C:/Users/G50/Desktop/Cesar' Shit/RecommenderSystem/Datasets_Originales/ORIGINAL_INVENTARIO.csv", locale = readr::locale(encoding = "latin1"))
 
@@ -29,12 +29,15 @@ i$ISBN <- gsub("[-, !, @, #, $, %, ^, &, , *, :, -, ., ;, /]", "", i$ISBN)
 #Todo la columna de Actor princial tiene una "a" al principio, esta linea lo elimina
 i$autorPrincipal <- gsub("^.{0,2}", "", i$autorPrincipal)
 
-i$autorPrincipal
+i$autorPrincipal <-tolower(i$autorPrincipal)
+
+#i$autorPrincipal
 #Elimina numeros innecesarios, tales como a?os, etc...
 i$autorPrincipal <- gsub("[0-9]*", "", i$autorPrincipal)
 
+i$autorprincipal <- gsub("ô", "", i$autorPrincipal)
 #Elimina caracteres especiales
-i$autorPrincipal <- gsub("?", "", i$autorPrincipal)
+#i$autorPrincipal <- gsub("?", "", i$autorPrincipal)
 
 #Elimina las comas, o puntos, son innecesarios
 i$autorPrincipal <- gsub("[-, .]", " ", i$autorPrincipal)
@@ -44,12 +47,12 @@ i$autorPrincipal <- gsub("[-, .]", " ", i$autorPrincipal)
 #Todo la columna de Actor secundario tiene una "a" al principio, esta linea lo elimina
 i$autorSecundario <- gsub("^.{0,2}", "", i$autorSecundario)
 
-
+i$autorSecundario <- gsub("ô", "", i$autorSecundario)
 #Elimina numeros innecesarios, tales como a?os, etc...
 i$autorSecundario <- gsub("[0-9]*", "", i$autorSecundario)
 
 #Elimina caracteres especiales
-i$autorSecundario <- gsub("?", "", i$autorSecundario)
+#i$autorSecundario <- gsub("?", "", i$autorSecundario)
 
 #Elimina todos los caracteres especiales
 i$autorSecundario <- gsub("[-, .]" , " " ,i$autorSecundario)
@@ -68,12 +71,17 @@ i$materia <- gsub("?", "", i$materia)
 #Coloca la letra ? en donde corresponde
 i$materia <- gsub("?n", "?", i$materia)
 
+i$materia <- gsub("ô", "", i$materia)
+
+#i$materia <- gsub("?", "n", i$materia)
+
 #Elimina los caracteres especiales
 i$materia <- gsub("[-, !, @, #, $, %, ^, &, , *, :, -, ., ;, /]", " ", i$materia)
 
 #Se crea una nueva columna a partir de los Autores principales y secundarios
 i$autores <- paste(i$autorPrincipal, ",", i$autorSecundario)
 
+i$autores <- gsub("ô", "", i$autores)
 # Se eliminan las 2 columnas
 i$autorPrincipal <- NULL
 i$autorSecundario <- NULL
@@ -208,15 +216,23 @@ levels(lang)
     i$language_reference <- gsub("irish", "english", i$language_reference)
     i$language_reference <- gsub("scots", "english", i$language_reference)
     
+    
+    i$autores <-tolower(i$autores)
+    i$materia <-tolower(i$materia)
+    
+    i$materia <- gsub("[?]", "n", i$materia)
+    
+    write.csv(i, "Clean_Datasets/inventario_clean.csv")
+    
     spanish_i <- i %>% 
   filter(language_reference == "spanish")
-    write.csv(spanish_i, "inventario_spanish.csv")
+    write.csv(spanish_i, "Inventario_English.spanish/inventario_spanish.csv")
     
 english_i <- i %>%
   filter(language_reference == "english")
-    write.csv(english_i, "inventario_english.csv")
+    write.csv(english_i, "Inventario_English.spanish/inventario_english.csv")
     
-    
+    #i %>% View()
     
 ```
 
