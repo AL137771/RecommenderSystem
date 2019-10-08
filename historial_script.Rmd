@@ -5,14 +5,7 @@ date: "16/9/2019"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-
 ```{r}
-
-
 #Se establecen las librerias
 library(tidyverse)
 library(lubridate)
@@ -166,6 +159,19 @@ oBCC$Carrera <- gsub("Licenciatura en Qimico Farmaco Biologo", "Licenciatura en 
 oBCC$Instituto <- gsub("HEHCO", "", oBCC$Instituto)
 
 
+#instituto <- function(x){
+ # oBCC$Instituto <- gsub(x, "IIT", oBCC$Instituto)
+#}
+
+#instituto("Ingeniería en Sistemas Automotrices")
+#instituto
+
+#oBCC$test <- instituto(oBCC$Carrera) 
+
+#oBCC$test %>% glimse() 
+
+#oBCC %>% View()
+
 #Se asocia el instituto IIT a las carreras que pertenecen ahi
 oBCC$Instituto <- gsub("Ingeniería en Sistemas Automotrices", "IIT", oBCC$Instituto)
 oBCC$Instituto <- gsub("Ingeniería Civil", "IIT", oBCC$Instituto)
@@ -251,12 +257,9 @@ oBCC$Instituto <- gsub("Licenciatura en Biología", "ICB", oBCC$Instituto)
 
 
 
-write.csv(oBCC, file = "historial_clean.csv")
-
+  #Cambia la columna de idioma a SPANISH
 oBCC %>% select(1,6) %>% View()
 
-
-  #Cambia la columna de idioma a SPANISH
 
   oBCC$language_reference <- gsub("latin", "spanish", oBCC$language_reference)
   oBCC$language_reference <- gsub("romanian", "spanish", oBCC$language_reference)
@@ -279,7 +282,7 @@ oBCC %>% select(1,6) %>% View()
   oBCC$language_reference <- gsub("icelandic", "spanish", oBCC$language_reference)
   oBCC$language_reference <- gsub("norwegian", "spanish", oBCC$language_reference)
   oBCC$language_reference <- gsub("sanskrit", "spanish", oBCC$language_reference)
-  
+  oBCC$language_reference <- gsub("slovenian-iso8859_2", "spanish", oBCC$language_reference)
   
   #Cambia la seccion idioma a ENGLISH
     oBCC$language_reference <- gsub("middle_english", "english", oBCC$language_reference)
@@ -291,8 +294,15 @@ oBCC %>% select(1,6) %>% View()
     oBCC$language_reference <- gsub("manx", "english", oBCC$language_reference)
     oBCC$language_reference <- gsub("afrikaans", "english", oBCC$language_reference)
     oBCC$language_reference <- gsub("welsh", "english", oBCC$language_reference)
-  
     
+    oBCC$language_reference <- gsub("breton", "english", oBCC$language_reference)
+    oBCC$language_reference <- gsub("danish", "english", oBCC$language_reference)
+    oBCC$language_reference <- gsub("french", "english", oBCC$language_reference)
+    oBCC$language_reference <- gsub("hungarian", "english", oBCC$language_reference)
+    oBCC$language_reference <- gsub("irish", "english", oBCC$language_reference)
+    oBCC$language_reference <- gsub("scots", "english", oBCC$language_reference)
+  
+    oBCC %>% View()
     
 #oBCC$language_reference <- gsub("", "spanish", oBCC$language_reference)
 #str(oBCC)
@@ -303,12 +313,17 @@ oBCC %>% select(1,6) %>% View()
 #oBCC$language_reference <- gsub("latin", "spanish", oBCC$language_reference)
 #oBCC$language_reference <- gsub("romanian", "esperando", "spanish", #oBCC$language_reference)
 
+    
+write.csv(oBCC, file = "Clean_Datasets/historial_clean.csv")
+
+    
+    
 spanish <- oBCC %>% 
   filter(language_reference == "spanish")
-    write.csv(spanish, "historial_spanish.csv")
+    write.csv(spanish, "Historial_English.Spanish/historial_spanish.csv")
     
 english <- oBCC %>%
   filter(language_reference == "english")
-    write.csv(english, "hisorial_english.csv")
+    write.csv(english, "Historial_English.Spanish/historial_english.csv")
 ```
 
