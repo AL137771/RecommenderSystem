@@ -11,6 +11,8 @@ output: html_document
 library(tidyverse)
 library(lubridate)
 library(textcat)
+library(hunspell)
+install.packages("hunspell")
 #Convierte el archivo .csv en formato DATASET para ser usado en RStudio
 i <- read_csv("C:/Users/G50/Desktop/Cesar' Shit/RecommenderSystem/Datasets_Originales/ORIGINAL_INVENTARIO.csv", locale = readr::locale(encoding = "latin1"))
 
@@ -85,6 +87,11 @@ i$autores <- gsub("ô", "", i$autores)
 # Se eliminan las 2 columnas
 i$autorPrincipal <- NULL
 i$autorSecundario <- NULL
+
+
+i$materia <- gsub("xa", "x", i$materia)
+
+
 
 i <- i[c("ISBN", "Titulo", "materia", "autores")]
 
@@ -217,16 +224,20 @@ levels(lang)
     i$language_reference <- gsub("scots", "english", i$language_reference)
     
     
+    i %>% View()
+    
     i$autores <-tolower(i$autores)
     i$materia <-tolower(i$materia)
     
     i$materia <- gsub("[?]", "n", i$materia)
     
-    write.csv(i, "Clean_Datasets/inventario_clean.csv")
+   # write.csv(i, "Clean_Datasets/inventario_clean.csv")
     
-    spanish_i <- i %>% 
-  filter(language_reference == "spanish")
-    write.csv(spanish_i, "Inventario_English.spanish/inventario_spanish.csv")
+    i <- read_csv("C:/Users/G50/Desktop/RecommenderSystem/Clean_Datasets/inventario_clean.csv", locale = readr::locale(encoding = "latin1"))
+    
+  spanish_i <- i %>% 
+filter(language_reference == "spanish")
+   write.csv(spanish_i, "Inventario_English.spanish/inventario_spanish.csv")
     
 english_i <- i %>%
   filter(language_reference == "english")
@@ -234,6 +245,10 @@ english_i <- i %>%
     
     #i %>% View()
     
+    words <-("murdder")
+    
+    bad <- hunspell("spell checkers are not neccessairy for langauge ninjas")
+print(bad[[1]])
 ```
 
 

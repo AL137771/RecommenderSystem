@@ -316,14 +316,14 @@ oBCC %>% select(1,6) %>% View()
     
 write.csv(oBCC, file = "Clean_Datasets/historial_clean.csv")
 
+
+oBCC %>%
+  count(Carrera)
+
+ggplot(data = oBCC) +
+  geom_bar(mapping = aes(x = Carrera))
     
     
-spanish <- oBCC %>% 
-  filter(language_reference == "spanish")
-    write.csv(spanish, "Historial_English.Spanish/historial_spanish.csv")
-    
-english <- oBCC %>%
-  filter(language_reference == "english")
-    write.csv(english, "Historial_English.Spanish/historial_english.csv")
+ 
 ```
 
