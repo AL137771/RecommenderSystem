@@ -36,6 +36,7 @@ CU.set_index('Titulo', inplace = True)
 
 CU['palabras'] = ''
 columns = CU.columns
+
 for index, row in CU.iterrows():
     words = ''
     for col in columns:
@@ -54,7 +55,6 @@ count_matrix = count.fit_transform(CU['palabras'])
 
 indices = pd.Series(CU.index)
 
-indices = pd.Series(CU.index)
 
 cosine_sim = cosine_similarity(count_matrix, count_matrix)
 
@@ -67,10 +67,10 @@ def recomendaciones(title, cosine_sim = cosine_sim):
     # creando un listado con las puntuaciones de similitud en orden descendiente
     score_series = pd.Series(cosine_sim[idx]).sort_values(ascending = False)
     # obteniendo los index de los libros mas similares
-    top_10_indexes = list(score_series.iloc[1:11].index)
+    top_5_indexes = list(score_series.iloc[1:6].index)
     
     # ciclo for que muestra los l0 libros mas parecidos
-    for i in top_10_indexes:
+    for i in top_5_indexes:
         recomendaciones_peliculas.append(list(CU.index)[i])
         
     return recomendaciones_peliculas
