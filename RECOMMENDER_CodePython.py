@@ -3,10 +3,13 @@ from rake_nltk import Rake
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import CountVectorizer
+import tkinter as tk
+
 
 pd.set_option('display.max_columns', 100)
 CU = pd.read_csv('C:/Users/G50/Desktop/RecommenderSystem/Inventario_English.spanish/inventario_english.csv', error_bad_lines=False, encoding="latin-1")
 CU.head()
+
 
 CU = CU[['Titulo','autores','materia']]
 
@@ -74,3 +77,4 @@ def recomendaciones(title, cosine_sim = cosine_sim):
         recomendaciones_peliculas.append(list(CU.index)[i])
         
     return recomendaciones_peliculas
+

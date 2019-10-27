@@ -19,6 +19,10 @@ i <- read_csv("C:/Users/G50/Desktop/Cesar' Shit/RecommenderSystem/Datasets_Origi
 #Convierte las columnas de dataset en caracteres en lugar de factores
 #CU <- data.frame(lapply(CU, as.character), stringsAsFactors=FALSE)
 
+#i %>% View()
+#str(i)
+
+
 #La mayoria de los ISBN consta de 13 digitos, entonces se cortan todos los valores antes del decimo tercer digito
 i$ISBN <- str_sub(i$ISBN, end = 13)
 
@@ -73,7 +77,7 @@ i$materia <- gsub("?", "", i$materia)
 #Coloca la letra ? en donde corresponde
 i$materia <- gsub("?n", "?", i$materia)
 
-i$materia <- gsub("ô", "", i$materia)
+i$materia <- gsub("Ô", "", i$materia)
 
 #i$materia <- gsub("?", "n", i$materia)
 
@@ -84,6 +88,9 @@ i$materia <- gsub("[-, !, @, #, $, %, ^, &, , *, :, -, ., ;, /]", " ", i$materia
 i$autores <- paste(i$autorPrincipal, ",", i$autorSecundario)
 
 i$autores <- gsub("ô", "", i$autores)
+
+ i$autores <-tolower(i$autores)
+     i$materia <-tolower(i$materia)
 # Se eliminan las 2 columnas
 i$autorPrincipal <- NULL
 i$autorSecundario <- NULL
@@ -101,7 +108,18 @@ i <- i[c(1,2,4, 3)]
 i
 
 
+ i$materia <- gsub("[?]", "n", i$materia)
+     
+     i$autores <- gsub(" ", "", i$autores)
+     i$autores <- gsub("  ", "", i$autores)
+     i$autores <- gsub("na,", "", i$autores)
+     i$autores <- gsub(",na", " ", i$autores)
+     i$autores <- gsub(" ,", ", ", i$autores)
+    i %>% View()
+    
+   
 
+    
 
 
 i %>% glimpse()
@@ -224,28 +242,19 @@ levels(lang)
     i$language_reference <- gsub("scots", "english", i$language_reference)
     
     
-     i$materia <- gsub("[?]", "n", i$materia)
-     
-     i$autores <- gsub(" ", "", i$autores)
-     i$autores <- gsub(" [,]", "[,] ", i$autores)
-    
     i %>% View()
-    
-    i$autores <-tolower(i$autores)
-    i$materia <-tolower(i$materia)
-    
    
     
-   write.csv(i, "Clean_Datasets/inventario_clean.csv")
+ write.csv(i, "Clean_Datasets/inventario_clean.csv")
     
-    i <- read_csv("C:/Users/G50/Desktop/RecommenderSystem/Clean_Datasets/inventario_clean.csv", locale = readr::locale(encoding = "latin1"))
+   i <- read_csv("C:/Users/G50/Desktop/RecommenderSystem/Clean_Datasets/inventario_clean.csv", locale = readr::locale(encoding = "latin1"))
     
- spanish_i <- i %>% 
-filter(language_reference == "spanish")
-  write.csv(spanish_i, "Inventario_English.spanish/inventario_spanish.csv")
+    spanish_i <- i %>% 
+    filter(language_reference == "spanish")
+     write.csv(spanish_i, "Inventario_English.spanish/inventario_spanish.csv")
     
-english_i <- i %>%
- filter(language_reference == "english")
+    english_i <- i %>%
+    filter(language_reference == "english")
     write.csv(english_i, "Inventario_English.spanish/inventario_english.csv")
   #  
     #i %>% View()
