@@ -14,8 +14,9 @@ library(textcat)
 library(hunspell)
 #install.packages("hunspell")
 #Convierte el archivo .csv en formato DATASET para ser usado en RStudio
-i <- read_csv("C:/Users/G50/Desktop/Cesar' Shit/RecommenderSystem/Datasets_Originales/ORIGINAL_INVENTARIO.csv", locale = readr::locale(encoding = "latin1"))
+i <- read_csv("C:/Users/G50/Desktop/SRBCC/SRBCC/Datasets_Originales/ORIGINAL_INVENTARIO.csv", locale = readr::locale(encoding = "latin1"))
 
+i %>% View()
 #Convierte las columnas de dataset en caracteres en lugar de factores
 #CU <- data.frame(lapply(CU, as.character), stringsAsFactors=FALSE)
 
@@ -41,7 +42,7 @@ i$autorPrincipal <-tolower(i$autorPrincipal)
 #Elimina numeros innecesarios, tales como a?os, etc...
 i$autorPrincipal <- gsub("[0-9]*", "", i$autorPrincipal)
 
-i$autorprincipal <- gsub("Ô", "", i$autorPrincipal)
+i$autorprincipal <- gsub("ô", "", i$autorPrincipal)
 #Elimina caracteres especiales
 #i$autorPrincipal <- gsub("?", "", i$autorPrincipal)
 
@@ -63,7 +64,7 @@ i$autorSecundario <- gsub("[0-9]*", "", i$autorSecundario)
 #Elimina todos los caracteres especiales
 i$autorSecundario <- gsub("[-, .]" , " " ,i$autorSecundario)
 
-i$autorSecundario
+#i$autorSecundario
 
 #CU$autorSecundario <- gsub("NA", "", CU$autorSecundario)
 
@@ -71,11 +72,11 @@ i$autorSecundario
 i$materia <- gsub("^.{0,2}", "", i$materia)
 
 #Elimina los caracteres especiales
-i$materia <- gsub("?", "", i$materia)
+#i$materia <- gsub("?", "", i$materia)
 #CU$materia <- gsub("x", " ", CU$materia)
 
 #Coloca la letra ? en donde corresponde
-i$materia <- gsub("?n", "?", i$materia)
+#i$materia <- gsub("?n", "?", i$materia)
 
 i$materia <- gsub("Ô", "", i$materia)
 
@@ -83,6 +84,8 @@ i$materia <- gsub("Ô", "", i$materia)
 
 #Elimina los caracteres especiales
 i$materia <- gsub("[-, !, @, #, $, %, ^, &, , *, :, -, ., ;, /]", " ", i$materia)
+
+i %>% View()
 
 #Se crea una nueva columna a partir de los Autores principales y secundarios
 i$autores <- paste(i$autorPrincipal, ",", i$autorSecundario)
@@ -92,7 +95,7 @@ i$autores <- gsub("ô", "", i$autores)
  i$autores <-tolower(i$autores)
      i$materia <-tolower(i$materia)
 # Se eliminan las 2 columnas
-i$autorPrincipal <- NULL
+i$autorprincipal <- NULL
 i$autorSecundario <- NULL
 
 
@@ -245,17 +248,17 @@ levels(lang)
     i %>% View()
    
     
- write.csv(i, "Clean_Datasets/inventario_clean.csv")
+ #write.csv(i, "Clean_Datasets/inventario_clean.csv")
     
-   i <- read_csv("C:/Users/G50/Desktop/RecommenderSystem/Clean_Datasets/inventario_clean.csv", locale = readr::locale(encoding = "latin1"))
+  # i <- read_csv("C:/Users/G50/Desktop/RecommenderSystem/Clean_Datasets/inventario_clean.csv", locale = readr::locale(encoding = "latin1"))
     
-    spanish_i <- i %>% 
-    filter(language_reference == "spanish")
-     write.csv(spanish_i, "Inventario_English.spanish/inventario_spanish.csv")
+   # spanish_i <- i %>% 
+   # filter(language_reference == "spanish")
+     #write.csv(spanish_i, "Inventario_English.spanish/inventario_spanish.csv")
     
-    english_i <- i %>%
-    filter(language_reference == "english")
-    write.csv(english_i, "Inventario_English.spanish/inventario_english.csv")
+   # english_i <- i %>%
+    #filter(language_reference == "english")
+    #write.csv(english_i, "Inventario_English.spanish/inventario_english.csv")
   #  
     #i %>% View()
 
