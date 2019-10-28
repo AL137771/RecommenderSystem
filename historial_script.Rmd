@@ -12,7 +12,7 @@ library(lubridate)
 library(textcat)
 
 #Se obtiene el archivo excel y se convierte a dataframe
-his <- read_csv("C:/Users/G50/Desktop/Cesar' Shit/RecommenderSystem/Datasets_Originales/ORIGINAL_HISTORIAL.csv", locale = readr::locale(encoding = "latin1"))
+his <- read_csv("C:/Users/G50/Desktop/SRBCC/SRBCC/Datasets_Originales/ORIGINAL_HISTORIAL.csv", locale = readr::locale(encoding = "latin1"))
 
 #his <- data.frame(lapply(his, as.character), stringsAsFactors=FALSE)
 
@@ -27,17 +27,20 @@ BCC <- his[grepl("BCC", his$Ubicacion),]
 nrow(BCC)
 oBCC <- BCC[!grepl("SRBCC", BCC$Ubicacion),]
 
-
 #Se arreglan errores respecto a la columna CARRERA
-oBCC$Carrera
-oBCC$Carrera <- gsub("Programa de ", "", oBCC$Carrera)
-oBCC$Carrera <- gsub("HECHO", "", oBCC$Carrera)
-oBCC$Carrera <- gsub("[0-9]*", "", oBCC$Carrera)
-oBCC$Carrera <- gsub("HEHCO", "", oBCC$Carrera)
-oBCC$Carrera <- gsub("Lic.", "Licenciatura", oBCC$Carrera)
-oBCC$Carrera <- gsub("Licenciaturanciatura", "Licenciatura", oBCC$Carrera)
-                      
 
+#Elimina los espacios del principio de la columna carrera
+oBCC$Carrera <- str_squish(oBCC$Carrera)
+
+oBCC$Carrera <- gsub("á", "a", oBCC$Carrera)
+oBCC$Carrera <- gsub("é", "e", oBCC$Carrera)
+oBCC$Carrera <- gsub("í", "i", oBCC$Carrera)
+oBCC$Carrera <- gsub("ó", "o", oBCC$Carrera)
+oBCC$Carrera <- gsub("ú", "u", oBCC$Carrera)
+
+
+
+str(oBCC)
 try <- oBCC
 try['ISBN']
 str(try)
@@ -51,76 +54,61 @@ oBCC$ISBN <- gsub("[-, !, @, #, $, %, ^, &, , *, :, -, ., ;, /]", "", oBCC$ISBN)
 #uacj_library <- read_csv("C:/Users/G50/Documents/R pRogRams/RecommenderSystem/Historial.csv", 
  #                        locale = readr::locale(encoding = "latin1"))
 
-oBCC %>% glimpse()
-
-#--------- Changing upper to lower case
-oBCC$Titulo <-tolower(oBCC$Titulo)
-
-oBCC %>% glimpse()
-
-#--------- Cleaning function
-rm_accent <- function(str,pattern="all") {
-   if(!is.character(str))
-    str <- as.character(str)
-
-  pattern <- unique(pattern)
-
-  if(any(pattern=="?"))
-    pattern[pattern=="?"] <- "?"
-
-  symbols <- c(
-    acute = "????????????",
-    grave = "??????????",
-    circunflex = "??????????",
-    tilde = "??????",
-    umlaut = "???????????",
-    cedil = "??"
-  )
-
-  nudeSymbols <- c(
-    acute = "aeiouAEIOUyY",
-    grave = "aeiouAEIOU",
-    circunflex = "aeiouAEIOU",
-    tilde = "aoAOnN",
-    umlaut = "aeiouAEIOUy",
-    cedil = "cC"
-  )
-
-  accentTypes <- c("?","`","^","~","?","?")
-
-  if(any(c("all","al","a","todos","t","to","tod","todo")%in%pattern)) # opcao retirar todos
-    return(chartr(paste(symbols, collapse=""), paste(nudeSymbols, collapse=""), str))
-
-  for(i in which(accentTypes%in%pattern))
-    str <- chartr(symbols[i],nudeSymbols[i], str) 
-
-  return(str)
-}
+#oBCC %>% glimpse()
 
 
-rm_accent(oBCC$Titulo)
-
-#uacj_library %>% View()
-
-#--------- Creating a column for language reference
-oBCC <- oBCC %>% 
-  mutate(language_reference = textcat(oBCC$Titulo))
-
-oBCC %>% glimpse()  %>% View()
-
+#oBCC %>% View()
 
 #write.csv(oBCC, file = "historial_clean.csv")
 
-#Se crea la columna instituto
-oBCC$Instituto<- NA
+oBCC <- oBCC[!grepl("( tiene otra mat )", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("ACTUALIZAR DATOS, DIRECCION, CORREO ELECTRONICO, ETC", oBCC$Carrera),] 
+oBCC <- oBCC[!grepl("(con mat )", oBCC$Carrera),] 
+oBCC <- oBCC[!grepl("Adeuda pesos", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("CATEDRATICO", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("DIRECTOR DE LA DIVISION MULTIDISCIPLINARIA DE LA UACJ-NCG", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("docente", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("DOCENTE", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("DOCENTE DE ENTRENAMIENTO DEPORTIVO", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("DOCENTE E INVESTIGADOR", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("DOCENTES BIC", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("hola", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("LIC. EN NUTRICION", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("M?dico Cirujano", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("Maestria en Cultura e Investigación Lite/al@alumnos.uacj.mx/	", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("NO PRESTAR HASTA QUE HABLE CON DANIEL CRUZ", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("PERSONAL DOCENTE.", oBCC$Carrera),]
+oBCC <- oBCC[!grepl('OBRA DAÑADA POR EL USUARIO. SE MANDARA A EVALUAR"', oBCC$Carrera),]
+oBCC <- oBCC[!grepl("Licenciatura en Administracion y Gestion de PYMES", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("Licenciatura en Ingenieria en Energia y Mantenimiento Industrial", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("PERSONAL ADMINISTRATIVO", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("PEDIR DATOS, DIRECCION, CORREO ELECTORONICO, ETC...", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("mtria. en estudios literarios", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("MEDICO FARMACO BIOLOGO", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("MEDICO CIRUJANO", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("personal administrativo", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("P. MED. VETERINARIO ZOOTECNISTA", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("Licenciatura en Diseño Industrial", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("Licenciatura en Diseño Urbano y del Paisaje", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("Licenciatura en Matematicas", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("maestria en derecho empresarial", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("Maestria en Estudios y Gestion Ambiental", oBCC$Carrera),]
+oBCC <- oBCC[!grepl("Maestria en Educacion", oBCC$Carrera),]
 
-oBCC$Instituto <- oBCC$Carrera
 
-#Variable utilizada para visualizar los datos
+#oBCC$Carrera %>% View()
+oBCC$Carrera <- gsub("Programa de ", "", oBCC$Carrera)
+oBCC$Carrera <- gsub("HECHO", "", oBCC$Carrera)
+oBCC$Carrera <- gsub("[0-9]*", "", oBCC$Carrera)
+oBCC$Carrera <- gsub("HEHCO", "", oBCC$Carrera)
+oBCC$Carrera <- gsub("Lic.", "Licenciatura", oBCC$Carrera)
+oBCC$Carrera <- gsub("Licenciaturanciatura", "Licenciatura", oBCC$Carrera)
+                      
+oBCC$Carrera <- gsub("(Titulacion) Licenciatura en Contaduria", "Licenciatura en Contaduria", oBCC$Carrera)
 
-oBCC %>% select(1,6) %>% View()
+oBCC$Carrera <- gsub("Ingenieria de Software MATRÍCULA PREVIAMENTE TRABAJADA BCC //
+", "Ingenieria de Software", oBCC$Carrera)
 
-#Limpiano columna Carrera
 oBCC$Carrera <- gsub("HEHCO  ", "", oBCC$Carrera)
 oBCC$Carrera <- gsub("Licenciatura en Literatura-Hispanomexicana", "Licenciatura en Literatura Hispanomexicana", oBCC$Carrera)
 oBCC$Carrera <- gsub("Licenciatura Periodismo", "Licenciatura en Periodismo", oBCC$Carrera)
@@ -147,7 +135,7 @@ oBCC$Carrera <- gsub("Mtria.", "Maestría", oBCC$Carrera)
 oBCC$Carrera <- gsub("LIC. EN FINANZAS", "Licenciatura en Finanzas", oBCC$Carrera)
 oBCC$Carrera <- gsub("Licenciatura Medico Cirujano", "Licenciatura en Medico Cirujano", oBCC$Carrera)
 oBCC$Carrera <- gsub("programa lic.", "Licenciatura", oBCC$Carrera)
-oBCC$Carrera <- gsub("Licenciatura en Matem ticas", "Licenciatura en Matematicas", oBCC$Carrera)
+oBCC$Carrera <- gsub("Licenciatura en Matem ticas", "Ingenieria en Matematicas", oBCC$Carrera)
 oBCC$Carrera <- gsub("Licenciatura en Ingeniería en Energía y Mantenimiento Industrial", "Ingeniería en Energía y Mantenimiento Industrial", oBCC$Carrera)
 oBCC$Carrera <- gsub("¢", "ó", oBCC$Carrera)
 oBCC$Carrera <- gsub("Licenciaturanciado", "Licenciatura", oBCC$Carrera)
@@ -156,15 +144,48 @@ oBCC$Carrera <- gsub("Cirujano Dentista", "Licenciatura en Cirujano Dentista", o
 oBCC$Carrera <- gsub("Licenciatura de Diseno Indus/al@alumnos.uacj.mx/", "Licenciatura en Diseño Industrial", oBCC$Carrera)
 oBCC$Carrera <- gsub("Carrera de Arquitecto", "Licenciatura en arquitectura", oBCC$Carrera)
 oBCC$Carrera <- gsub("Licenciatura en Qimico Farmaco Biologo", "Licenciatura en Químico Fármaco Biólogo", oBCC$Carrera)
-oBCC$Instituto <- gsub("HEHCO", "", oBCC$Instituto)
+#oBCC$Instituto <- gsub("HEHCO", "", oBCC$Instituto)
 
 
-#instituto <- function(x){
- # oBCC$Instituto <- gsub(x, "IIT", oBCC$Instituto)
-#}
+oBCC$Carrera <- gsub(". Ingenieria Industrial y de Sistemas", "Ingenieria Industrial y de Sistemas", oBCC$Carrera)
+oBCC$Carrera <- gsub(". Licenciatura en Administracion de Empresas", "Licenciatura en Administracion de Empresas", oBCC$Carrera)
+oBCC$Carrera <- gsub(". Licenciatura en Comercio Exterior", "Licenciatura en Comercio Exterior", oBCC$Carrera)
+oBCC$Carrera <- gsub(". Licenciatura en Enfermeria", "", oBCC$Carrera)
+oBCC$Carrera <- gsub("Administracion de Empresas", "Licenciatura en Administracion de Empresas", oBCC$Carrera)
+oBCC$Carrera <- gsub("Licenciatura en Dise¤o Gr fico", "Licenciatura en Diseño Grafico", oBCC$Carrera)
+oBCC$Carrera <- gsub("Licenciatura en Diseño Gfico", "Licenciatura en Diseño Grafico", oBCC$Carrera)
+oBCC$Carrera <- gsub("Licenciatura en Historia de Mexico", "Licenciatura en Historia", oBCC$Carrera)
+oBCC$Carrera <- gsub("Licenciatura en arquitectura", "Licenciatura en Arquitectura", oBCC$Carrera)
+oBCC$Carrera <- gsub("Licenciatura en Comercio Exterior - cambio de carrera a Derecho", "Licenciatura en Comercio Exterior", oBCC$Carrera)
+oBCC$Carrera <- gsub("Licenciatura en Dise¤o de Interiores", "Licenciatura en Diseño de Interiores", oBCC$Carrera)
+oBCC$Carrera <- gsub("Licenciatura en Quimico Farmaco Biologo", "Licenciatura en Quimico Farmaceutico Biologo", oBCC$Carrera)
+oBCC$Carrera <- gsub("Medico Veterinario Zootecnista", "Licenciatura en Medico Veterinario Zootecnista", oBCC$Carrera)
+oBCC$Carrera <- gsub("O Licenciatura en Educacion", "Licenciatura en Educacion", oBCC$Carrera)
+oBCC$Carrera <- gsub("OIngenieria en Mecatronica", "Ingenieria en Mecatronica", oBCC$Carrera)
 
-#instituto("Ingeniería en Sistemas Automotrices")
-#instituto
+oBCC$Carrera <- gsub("P.LIC. QUIMICA", "Licenciatura en Quimica", oBCC$Carrera)
+oBCC$Carrera <- gsub("P.MED. VETERINARIO ZOOTECNISTA", "Licenciatura en Medico Veterinario Zootecnista", oBCC$Carrera)
+oBCC$Carrera <- gsub("[(]Titulacion[)] Licenciatura en Contaduria", "Licenciatura en Contaduria", oBCC$Carrera)
+oBCC$Carrera <- gsub("Ingenieria de Software MATRÍCULA PREVIAMENTE TRABAJADA BCC [//]", "Ingenieria de Software", oBCC$Carrera)
+oBCC$Carrera <- gsub("Ingenieria de Software[/]", "Ingenieria de Software", oBCC$Carrera)
+oBCC$Carrera <- gsub("[.]", "", oBCC$Carrera)
+oBCC$Carrera <- gsub("Licenciatura en Diseño Grafico [(]semipresencial[)]", "Licenciatura en Diseño Grafico", oBCC$Carrera)
+oBCC$Carrera <- gsub("Maestria en Cultura e Investigacion Lite[/]al[@}alumnosuacjmx[/]", "Maestria en Cultura e Investigacion", oBCC$Carrera)
+oBCC$Carrera <- gsub("Licenciatura en Licenciatura en Administracion de Empresas", "Licenciatura en Administracion de Empresas", oBCC$Carrera)
+oBCC$Carrera <- gsub("Maestria en Cultura e Investigacionalumnosuacjmx[/]", "Maestria en Cultura e Investigacion", oBCC$Carrera)
+
+oBCC$Carrera <- gsub("Licenciatura eLicenciatura en Administracion de Empresas", "Licenciatura en Administracion de Empresas", oBCC$Carrera)
+oBCC$Carrera <- gsub("Licenciatura en Licenciatura en Arquitectura", "Licenciatura en Arquitectura", oBCC$Carrera)
+oBCC$Carrera <- gsub("Licenciatura en Licenciatura en Cirujano Dentista	", "Licenciatura en Cirujano Dentista		", oBCC$Carrera)
+oBCC$Carrera <- gsub("Licenciatura en Licenciatura en Medico Veterinario Zootecnista", "Licenciatura en Medico Veterinario Zootecnista", oBCC$Carrera)
+
+
+oBCC$Carrera <- gsub("Licenciatura de Diseño Industrial", "Licenciatura en Diseño Industrial", oBCC$Carrera)
+oBCC$Carrera <- gsub("Licenciatura de Economia", "Licenciatura en Economia", oBCC$Carrera)
+
+
+
+
 
 #oBCC$test <- instituto(oBCC$Carrera) 
 
@@ -172,90 +193,122 @@ oBCC$Instituto <- gsub("HEHCO", "", oBCC$Instituto)
 
 #oBCC %>% View()
 
+#Se crea la columna instituto
+oBCC$Instituto<- NA
+
+oBCC$Instituto <- oBCC$Carrera
+
+#variable utilizada para visualizar los datos
+
+oBCC %>% select(4,6) %>% View()
+
+
 #Se asocia el instituto IIT a las carreras que pertenecen ahi
-oBCC$Instituto <- gsub("Ingeniería en Sistemas Automotrices", "IIT", oBCC$Instituto)
-oBCC$Instituto <- gsub("Ingeniería Civil", "IIT", oBCC$Instituto)
-oBCC$Instituto <- gsub("Ingeniería Industrial y de Sistemas", "IIT", oBCC$Instituto)
-oBCC$Instituto <- gsub("Ingeniería de Software", "IIT", oBCC$Instituto)
-oBCC$Instituto <- gsub("Ingeniería en Sistemas Computacionales", "IIT", oBCC$Instituto)
-oBCC$Instituto <- gsub("Ingeniería Industrial y de Sistemas", "IIT", oBCC$Instituto)
-oBCC$Instituto <- gsub("Ingeniería en Mecatrónica", "IIT", oBCC$Instituto)
+oBCC$Instituto <- gsub("Ingenieria en Sistemas Automotrices", "IIT", oBCC$Instituto)
+oBCC$Instituto <- gsub("Ingenieria Civil", "IIT", oBCC$Instituto)
+oBCC$Instituto <- gsub("Ingenieria Industrial y de Sistemas", "IIT", oBCC$Instituto)
+oBCC$Instituto <- gsub("Ingenieria de Software", "IIT", oBCC$Instituto)
+oBCC$Instituto <- gsub("Ingenieria en Matematicas", "IIT", oBCC$Instituto)
+oBCC$Instituto <- gsub("Ingenieria en Sistemas Computacionales", "IIT", oBCC$Instituto)
+oBCC$Instituto <- gsub("Ingenieria Industrial y de Sistemas", "IIT", oBCC$Instituto)
+oBCC$Instituto <- gsub("Ingenieria en Mecatronica", "IIT", oBCC$Instituto)
 oBCC$Instituto <- gsub("Maestria en Ingenieria Industrial", "IIT", oBCC$Instituto)
-oBCC$Instituto <- gsub("Ingeniería Mecánica", "IIT", oBCC$Instituto)
-oBCC$Instituto <- gsub("Ingeniería en Sistemas Digitales", "IIT", oBCC$Instituto)
-oBCC$Instituto <- gsub("Ingeniería Ambiental", "IIT", oBCC$Instituto)
-oBCC$Instituto <- gsub("Ingeniería en Energía y Mantenimiento Industrial", "IIT", oBCC$Instituto)
-oBCC$Instituto <- gsub("Ingeniería Electrica", "IIT", oBCC$Instituto)
-oBCC$Instituto <- gsub("Ingeniería Biomédica", "IIT", oBCC$Instituto)
-oBCC$Instituto <- gsub("Ingeniería Telemática", "IIT", oBCC$Instituto)
+oBCC$Instituto <- gsub("Ingenieria Mecanica", "IIT", oBCC$Instituto)
+oBCC$Instituto <- gsub("Ingenieria en Sistemas Digitales", "IIT", oBCC$Instituto)
+oBCC$Instituto <- gsub("Ingenieria Ambiental", "IIT", oBCC$Instituto)
+oBCC$Instituto <- gsub("Ingenieria en Energia y Mantenimiento Industrial", "IIT", oBCC$Instituto)
+oBCC$Instituto <- gsub("Ingenieria Electrica", "IIT", oBCC$Instituto)
+oBCC$Instituto <- gsub("Ingenieria Biomedica", "IIT", oBCC$Instituto)
+oBCC$Instituto <- gsub("Ingenieria Telematica", "IIT", oBCC$Instituto)
 oBCC$Instituto <- gsub("Doctorado en Ciencias en Ingenieria", "IIT", oBCC$Instituto)
-oBCC$Instituto <- gsub("Ingeniería en Sistemas Digitales", "IIT", oBCC$Instituto)
+oBCC$Instituto <- gsub("Ingenieria en Sistemas Digitales", "IIT", oBCC$Instituto)
 oBCC$Instituto <- gsub("Licenciatura en IIT", "IIT", oBCC$Instituto)
 oBCC$Instituto <- gsub("IIT y Comunicaciones", "IIT", oBCC$Instituto)
+
+oBCC$Instituto <- gsub("Doctorado en Ciencias de los Materiales", "IIT", oBCC$Instituto)
+oBCC$Instituto <- gsub("Ingenieria en Aeronautica", "IIT", oBCC$Instituto)
+oBCC$Instituto <- gsub("Ingenieria en Manufactura", "IIT", oBCC$Instituto)
+oBCC$Instituto <- gsub("Ingenieria Fisica", "IIT", oBCC$Instituto)
+oBCC$Instituto <- gsub("Maestria en Ciencias de los Materiales", "IIT", oBCC$Instituto)
+oBCC$Instituto <- gsub("Maestria en IIT", "IIT", oBCC$Instituto)
 
 
 #Se asocia el instituto ICSA a las carreras que pertenecen ahi
 oBCC$Instituto <- gsub("Licenciatura en Derecho", "ICSA", oBCC$Instituto)
 oBCC$Instituto <- gsub("programa lic. en Derecho", "ICSA", oBCC$Instituto)
 oBCC$Instituto <- gsub("P. LIC. DERECHO", "ICSA", oBCC$Instituto)
-oBCC$Instituto <- gsub("Licenciatura en Educación ", "ICSA", oBCC$Instituto)
-oBCC$Instituto <- gsub("Licenciatura en Psicología", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Licenciatura en Educacion ", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Maestria en Educacion ", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Licenciatura en Psicologia", "ICSA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Carrera de Licenciaturanciado en Psícologia", "ICSA", oBCC$Instituto)
-oBCC$Instituto <- gsub("Licenciatura en Educación", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Licenciatura en Educacion", "ICSA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Licenciatura en Trabajo Social", "ICSA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Licenciatura en Periodismo", "ICSA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Licenciatura Periodismo", "ICSA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Licenciatura en Comercio Exterior", "ICSA", oBCC$Instituto)
-oBCC$Instituto <- gsub("Maestria en Psicología", "ICSA", oBCC$Instituto)
-oBCC$Instituto <- gsub("Licenciatura  en Administración de Empresas", "ICSA", oBCC$Instituto)
-oBCC$Instituto <- gsub("Licenciatura en Administración de Empresas", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Maestria en Psicologia", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Licenciatura  en Administracion de Empresas", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Licenciatura en Administracion de Empresas", "ICSA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Licenciatura en Turismo", "ICSA", oBCC$Instituto)
-oBCC$Instituto <- gsub("Licenciatura en Contaduría", "ICSA", oBCC$Instituto)
-oBCC$Instituto <- gsub("Licenciatura en Pedagogía del Inglés como segunda lengua", "ICSA", oBCC$Instituto)
-oBCC$Instituto <- gsub("Licenciatura en Literatura-Hispanomexicana", "ICSA", oBCC$Instituto)
-oBCC$Instituto <- gsub("Licenciatura en Enseñanza del Inglés", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Licenciatura en Contaduria", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Licenciatura en Pedagogia del Ingles como segunda lengua", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Licenciatura en Literatura Hispanomexicana", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Licenciatura en Enseñanza del Ingles", "ICSA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Licenciatura en Finanzas", "ICSA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Licenciatura Administracion de Empresas", "ICSA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Carrera de Licenciaturanciado en Administración de Empresas", "ICSA", oBCC$Instituto)
-oBCC$Instituto <- gsub("Maestr¡a en Administraci¢n", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Maestria en Administracion", "ICSA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Licenciatura en Historia", "ICSA", oBCC$Instituto)
-oBCC$Instituto <- gsub("Licenciatura en Economía", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Licenciatura en Economia", "ICSA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Licenciatura en Finanzas", "ICSA", oBCC$Instituto)
-oBCC$Instituto <- gsub("Licenciatura en Sociologa", "ICSA", oBCC$Instituto)
-oBCC$Instituto <- gsub("Maestría en Psicología", "ICSA", oBCC$Instituto)
-oBCC$Instituto <- gsub("Arquitectura", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Licenciatura en Sociologia", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Maestria en Psicologia", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Licenciatura en Arquitectura", "ICSA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Carrera de Licenciaturanciado de Economia", "ICSA", oBCC$Instituto)
-oBCC$Instituto <- gsub("Maestría en investigacion educativa", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Maestria en investigacion educativa", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Doctorado en Psicologia", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Maestria en Ciencias Economicas", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Maestria en Ciencias Sociales", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Maestria en Cultura e Investigacion", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Maestria en Educacion	", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Maestria en Estudios y Gestion Ambiental	", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Maestria en Filosofia", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Maestria en Investigacion Juridica", "ICSA", oBCC$Instituto)
+oBCC$Instituto <- gsub("ICSAFisica", "ICSA", oBCC$Instituto)
 
 #Se asocia el instituto IADA a las carreras que pertenecen ahi
-oBCC$Instituto <- gsub("Licenciatura en Diseño Gráfico", "IADA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Licenciatura en Diseño Grafico", "IADA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Licenciatura en Diseño Industrial", "IADA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Licenciatura de Diseno Indus/al@alumnos.uacj.mx/", "IADA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Licenciatura en Publicidad", "IADA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Licenciatura en Diseño de Interiores", "IADA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Licenciatura en Arquitectura", "IADA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Licenciatura en Diseño Digital de Medios Interactivos", "IADA", oBCC$Instituto)
-oBCC$Instituto <- gsub("Maestría en Estudios y Procesos Creativos", "IADA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Maestria en Estudios y Procesos Creativos", "IADA", oBCC$Instituto)
 oBCC$Instituto <- gsub("Diseño digital", "IADA", oBCC$Instituto)
-oBCC$Instituto <- gsub("Carrera de Licenciaturanciado en Diseño Gráfico", "IADA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Carrera de Licenciaturanciado en Diseño Grafico", "IADA", oBCC$Instituto)
+oBCC$Instituto <- gsub("Licenciatura en Ciencias de la Seguridad", "IADA", oBCC$Instituto)
+oBCC$Instituto <- gsub("IADA en Arte y Diseño", "IADA", oBCC$Instituto)
+
 
 #Se asocia el instituto ICB a las carreras que pertenecen ahi
-oBCC$Instituto <- gsub("Licenciatura en Gerontología", "ICB", oBCC$Instituto)
-oBCC$Instituto <- gsub("Licenciatura en Nutrición", "ICB", oBCC$Instituto)
+oBCC$Instituto <- gsub("Licenciatura en Gerontologia", "ICB", oBCC$Instituto)
+oBCC$Instituto <- gsub("Licenciatura en Nutricion", "ICB", oBCC$Instituto)
 oBCC$Instituto <- gsub("P. LIC. NUTRICION", "ICB", oBCC$Instituto)
 oBCC$Instituto <- gsub("P LIC. NUTRICION", "ICB", oBCC$Instituto)
-oBCC$Instituto <- gsub("Licenciatura en Enfermería", "ICB", oBCC$Instituto)
-oBCC$Instituto <- gsub("Licenciatura en Químico Farmacéutico Biólogo", "ICB", oBCC$Instituto)
-oBCC$Instituto <- gsub("Licenciatura en Químico Fármaco Biólogo", "ICB", oBCC$Instituto)
+oBCC$Instituto <- gsub("Licenciatura en Enfermeria", "ICB", oBCC$Instituto)
+oBCC$Instituto <- gsub("Licenciatura en Quimico Farmaceutico Biologo", "ICB", oBCC$Instituto)
+oBCC$Instituto <- gsub("Licenciatura en Quimico Farmaco Biologo", "ICB", oBCC$Instituto)
 oBCC$Instituto <- gsub("QUIMICO FARMACO BIOLOGO", "ICB", oBCC$Instituto)
 oBCC$Instituto <- gsub("Licenciatura en Entrenamiento Deportivo", "ICB", oBCC$Instituto)
-oBCC$Instituto <- gsub("Médico Veterinario Zootecnista", "ICB", oBCC$Instituto)
+oBCC$Instituto <- gsub("Licenciatura en Medico Veterinario Zootecnista", "ICB", oBCC$Instituto)
 oBCC$Instituto <- gsub("Licenciatura en Biologia", "ICB", oBCC$Instituto)
 oBCC$Instituto <- gsub("Licenciatura en Cirujano Dentista", "ICB", oBCC$Instituto)
 oBCC$Instituto <- gsub("Licenciatura en Quimica", "ICB", oBCC$Instituto)
-oBCC$Instituto <- gsub("Licenciatura en Biología", "ICB", oBCC$Instituto)
+oBCC$Instituto <- gsub("Licenciatura en Biologia", "ICB", oBCC$Instituto)
 
-
+oBCC$Instituto <- gsub("Licenciatura en ICB", "ICB", oBCC$Instituto)
+oBCC$Instituto <- gsub("Maestria en Ciencias de la Salud Publica", "ICB", oBCC$Instituto)
 
   #Cambia la columna de idioma a SPANISH
 oBCC %>% select(1,6) %>% View()
@@ -324,6 +377,24 @@ ggplot(data = oBCC) +
   geom_bar(mapping = aes(x = Carrera))
     
     
+oBCC %>% count(Carrera)
+
+#ggplot(data = oBCC) +
+ # geom_bar(mapping = aes(x = Carrera))
+#Limpiano columna Carrera
+
  
+oBCC %>% View()
+
+
+
+
+
+
+#oBCC$Carrera <-tolower(oBCC$Carrera)
+
+oBCC %>% count(Carrera)
+
+oBCC %>% count(Instituto)
 ```
 
