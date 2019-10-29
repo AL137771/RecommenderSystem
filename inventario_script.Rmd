@@ -246,8 +246,18 @@ levels(lang)
     
     
     i %>% View()
-   
+ 
     
+    i %>% filter(Titulo == "limpieza de sangre")
+    i %>% filter(Titulo == "economia y sociedad")
+    
+    
+    chingar <- unique(i$Titulo)
+    
+    chingar %>% filter(Titulo == "limpieza de sangre")  
+    
+    
+    chingar %>% View() 
  #write.csv(i, "Clean_Datasets/inventario_clean.csv")
     
   # i <- read_csv("C:/Users/G50/Desktop/RecommenderSystem/Clean_Datasets/inventario_clean.csv", locale = readr::locale(encoding = "latin1"))
