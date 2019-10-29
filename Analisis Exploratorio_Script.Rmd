@@ -1,0 +1,181 @@
+---
+title: "ExploratoryAnalysis_Historial"
+author: "Cesar"
+date: "28/10/2019"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+Primero se cargan las librerias necesarias para realizar el analisis exploratorio.
+```{r}
+library(tidyverse)
+library(DataExplorer)
+library(ISLR)
+library(skimr)
+library(devtools)
+
+devtools::install_github("ropensci/visdat")
+library(visdat)
+```
+
+Despues se carga el dataset a ser analizado.
+```{r}
+EA <- read_csv("C:/Users/G50/Desktop/SRBCC/SRBCC/Clean_Datasets/historial_clean.csv", locale = readr::locale(encoding = "latin1"))
+```
+
+```{r}
+head(EA)
+```
+
+```{r}
+glimpse(EA)
+```
+
+```{r}
+dim(EA)
+
+```
+
+```{r}
+summary(EA)
+
+```
+
+```{r}
+skim(EA)
+```
+
+
+```{r}
+vis_miss(EA, warn_large_data = FALSE)
+vis_dat(EA, warn_large_data = FALSE)
+
+#DataExplorer::create_report(EA)
+```
+
+
+```{r}
+q1 <- EA %>% count(Instituto)
+
+ggplot(q1, aes(x = reorder(Instituto, -n), y = n, fill = Instituto)) +
+               geom_col() + ggtitle("Cual es la cantidad de libros prestados por instituto en la biblioteca de CU") +
+    geom_text( aes(label = n, n = n + 0.05), position =position_dodge(0.9), vjust =2 ) +
+                theme_light()     +         
+                theme(axis.text.x = element_blank())
+
+```
+
+```{r}
+q2 <- EA %>% count(Carrera) %>%
+                            arrange(desc(n)) %>%
+                            head(5)
+
+
+ggplot(q2, aes(x = reorder(Carrera, -n), y = n, fill = Carrera)) +
+               geom_col() + ggtitle("Libros mas prestados en ICSA") +
+    geom_text( aes(label = n, n = n + 0.05), position =position_dodge(0.9), vjust =2 ) +
+                theme_light()     +         
+                theme(axis.text.x = element_blank())
+```
+
+```{r}
+icsa <- EA %>% filter(Instituto == "ICSA") 
+ICSA <- icsa %>% count(Titulo) %>% arrange(desc(n)) %>% head(5)
+
+plot <- function(id, name){
+  print(ggplot(id, aes(x = reorder(Titulo, -n), y = n, fill = Titulo)) +
+               geom_col() + ggtitle("Libros mas prestados en ", name) +
+    geom_text( aes(label = n, n = n + 0.05), position =position_dodge(0.9), vjust =2 ) +
+                theme_dark()     +         
+                theme(axis.text.x = element_blank())
+  )
+}
+plot(ICSA, "ICSA")
+
+```
+
+```{r}
+iit <- EA %>% filter(Instituto == "IIT") 
+IIT <- iit %>% count(Titulo) %>% arrange(desc(n)) %>% head(5)
+
+plot(IIT, "IIT")
+```
+
+```{r}
+iada <- EA %>% filter(Instituto == "IADA") 
+IADA <- iada %>% count(Titulo) %>% arrange(desc(n)) %>% head(5)
+
+plot(IADA, "IADA")
+```
+
+```{r}
+icb <- EA %>% filter(Instituto == "ICB") 
+ICB <- icb %>% count(Titulo) %>% arrange(desc(n)) %>% head(5)
+plot(ICB, "ICB")
+
+```
+
+```{r}
+
+#oBCC %>% count(Carrera) %>% arrange(desc(n))
+
+CAR <- function(CARRERA, carrera, name){
+CARRERA <- EA %>% filter(Carrera == name)
+carrera <- CARRERA %>% count(Titulo) %>% arrange(desc(n)) %>% head(5)
+
+  ggplot(carrera, aes(x = reorder(Titulo, -n), y = n, fill = Titulo)) +
+               geom_col() + ggtitle(name) +
+    geom_text( aes(label = n, n = n + 0.05), position =position_dodge(0.9), vjust =2 ) +
+                theme_dark()     +         
+                theme(axis.text.x = element_blank()) 
+                                }
+
+CAR(DERECHO, derecho, "Licenciatura en Derecho")
+
+CAR(EDUCACION, educacion, "Licenciatura en Educacion")
+
+
+CAR(PSICOLOGIA, psicologia, "Licenciatura en Psicologia")
+CAR(ADMIN, admin, "Licenciatura en Administracion de Empresas")
+CAR(QFB, qfb, "Licenciatura en Quimico Farmaceutico Biologo")
+CAR(ENFERMERIA, enfermeria, "Licenciatura en Enfermeria")
+CAR(MVZ, mvz, "Licenciatura en Medico Veterinario Zootecnista")
+CAR(CE, ce, "Licenciatura en Comercio Exterior")
+CAR(PUB, pub, "Licenciatura en Publicidad")
+CAR(TS, ts, "Licenciatura en Trabajo Social")
+CAR(IIS, iis, "Ingenieria Industrial y de Sistemas")
+CAR(DS, ds, "Licenciatura en Diseño Grafico")
+CAR(CONTA, conta, "Licenciatura en Contaduria")
+CAR(MECA, meca, "Ingenieria en Mecatronica")
+CAR(SC, sc, "Ingenieria en Sistemas Computacionales")
+CAR(NUTRI,  nutri, "Licenciatura en Nutricion")
+CAR(SA, sa, "Ingenieria en Sistemas Automotrices")
+CAR(SOFT, soft, "Ingenieria de Software")
+CAR(ED, ed, "Licenciatura en Entrenamiento Deportivo")
+CAR(TURI, turi, "Licenciatura en Turismo")
+CAR(PERI, peri, "Licenciatura en Periodismo")
+CAR(EI, ei, "Licenciatura en Enseñanza del Ingles")
+CAR(ARQ, ARQ, "Licenciatura en Arquitectura")
+CAR(INGLES, ingles, "Licenciatura en Pedagogia del Ingles como segunda lengua")
+
+
+```
+
+
+```{r}
+EA %>% count(`Matricula ficticia`) %>% arrange(desc(n))
+```
+
+
+
+
+
+
+
