@@ -272,6 +272,22 @@ levels(lang)
   #  
     #i %>% View()
 
+    
+    x <- read_csv("C:/Users/G50/Desktop/SRBCC/SRBCC/Inventario_English.spanish/inventario_spanishs.csv", locale = readr::locale(encoding = "latin1"))
+    
+    data %>% View()
+    
+    
+    
+    data <- subset(x, !duplicated(x[,"Titulo"]))
+    
+                  
+    write.csv(data, "Inventario_English.spanish/inventario_spanish_noRepeatedData.csv")
+    
+    x$Titulo <- unique(x$Titulo)
+    
+    y %>% View()
+    
 ```
 
 

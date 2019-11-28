@@ -7,6 +7,7 @@ output: html_document
 
 ```{r}
 #Se establecen las librerias
+install
 library(tidyverse)
 library(lubridate)
 library(textcat)
@@ -14,13 +15,15 @@ library(textcat)
 #Se obtiene el archivo excel y se convierte a dataframe
 his <- read_csv("C:/Users/G50/Desktop/SRBCC/SRBCC/Datasets_Originales/ORIGINAL_HISTORIAL.csv", locale = readr::locale(encoding = "latin1"))
 
+his %>% View()
+
 #his <- data.frame(lapply(his, as.character), stringsAsFactors=FALSE)
 
 #Se utiliza para verificar la estructura del dataset
 #str(his)
 
 # Se cuenta el numero lineas que contiene el dataset
-nrow(his)
+nrow(oBCC)
 
 #Elimina las bibliotecas que no pertenecen a Ciudad del conocimiento
 BCC <- his[grepl("BCC", his$Ubicacion),]
@@ -50,6 +53,8 @@ oBCC$ISBN <- str_sub(try$ISBN, end = 13)
 oBCC$ISBN <- gsub("[a-z, A-Z, ?]*", "", oBCC$ISBN)
 oBCC$ISBN <- gsub("[-, !, @, #, $, %, ^, &, , *, :, -, ., ;, /]", "", oBCC$ISBN)
 
+
+oBCC %>% view()
 #--------- Reading the data
 #uacj_library <- read_csv("C:/Users/G50/Documents/R pRogRams/RecommenderSystem/Historial.csv", 
  #                        locale = readr::locale(encoding = "latin1"))
@@ -313,7 +318,7 @@ oBCC$Instituto <- gsub("Licenciatura en ICB", "ICB", oBCC$Instituto)
 oBCC$Instituto <- gsub("Maestria en Ciencias de la Salud Publica", "ICB", oBCC$Instituto)
 
   #Cambia la columna de idioma a SPANISH
-oBCC %>% select(1,6) %>% View()
+oBCC %>% select(4,6) %>% View()
 
 
   oBCC$language_reference <- gsub("latin", "spanish", oBCC$language_reference)
